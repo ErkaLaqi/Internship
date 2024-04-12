@@ -55,10 +55,11 @@ if ($_SERVER["REQUEST_METHOD"]=="POST") {
     $lowercase = preg_match('@[a-z]@', $password);
     $number = preg_match('@[0-9]@', $password);
     $specialChars = preg_match('@[^\w]@', $password);
+    $phoneNum = preg_match('@^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$@', $phone);
 
     if (empty($phone)) {
         $validationErrors['phone'] = "Phone number is required";
-    } elseif (!($number)) {
+    } elseif (!$phoneNum) {
         $validationErrors['phone'] = "Phone number must contain only numbers";
     }
     $oldData['phone'] = $phone ;

@@ -202,68 +202,6 @@ if (isset($_SESSION['profile_form_validations'])) {
                     </div>
 
 
-                 <!--   <?php /*if ($userDetails['role'] === 'user'): */?>
-                        <div class="ibox-title">
-                            <h5>Contact an Admin</h5>
-                            <div class="ibox-tools">
-                                <a class="collapse-link">
-                                    <i class="fa fa-chevron-up"></i>
-                                </a>
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                    <i class="fa fa-wrench"></i>
-                                </a>
-                                <ul class="dropdown-menu dropdown-user">
-                                    <li><a href="#">Config option 1</a>
-                                    </li>
-                                    <li><a href="#">Config option 2</a>
-                                    </li>
-                                </ul>
-                                <a class="close-link">
-                                    <i class="fa fa-times"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="ibox-content">
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>LastName</th>
-                                        <th>Email</th>
-                                        <th>Contact</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <?php
-/*                                    $sql = "SELECT * FROM users where role = 'admin'";
-                                    $result = $db_conn->query($sql);
-                                    if($result){
-                                        while ($row = mysqli_fetch_assoc($result)){
-                                            $name = $row['name'];
-                                            $lastname = $row['lastname'];
-                                            $email = $row['email'];
-                                            echo '<tr>
-                                                <td>'.$name.'</td>
-                                                <td>'.$lastname.'</td>
-                                                <td>'.$email.'</td>
-                                                <td>
-            <button class="btn btn-primary"><a href="#" style="color: #FFFFFF">Contact</a></button>
-        </td>
-        </tr>
-                ';
-                                        };
-                                    }
-                                    */?>
-
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    --><?php /*endif; */?>
-
-            <!-- include info-->
 
 <br> <br>
 

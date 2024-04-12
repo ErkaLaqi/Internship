@@ -33,6 +33,7 @@ if ($page === "profileUpdate") {
     $lowercase = preg_match('@[a-z]@', $password);
     $specialChars = preg_match('@[^\w]@', $password);
     $number = preg_match('/^[0-9]*$/', $phone);
+    $phoneNum = preg_match('@^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$@', $phone);
     $select = "select * from users where id='$id'";
 
     $sql = mysqli_query($db_conn, $select);
@@ -71,7 +72,7 @@ if ($page === "profileUpdate") {
             $validationErrors['birthday'] = "You must be at least 18 years old!";
         }
 
-        if (!($number)) {
+        if (!($phoneNum)) {
             $validationErrors['phone'] = "Phone number must contain only numbers";
         } else {
             $update .= ", phone = '$phone'";

@@ -2,17 +2,17 @@
 global $db_conn;
 session_start();
 include "include/dbConnection.php";
-if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
+/*if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
     header("Location: login.php");
 } elseif (empty($_SESSION['email']) || empty($_SESSION['id'])) {
     header("Location: login.php");
-}
+}*/
 ?>
 
 
 <!DOCTYPE html>
-<html>
 
+<html>
 <head>
 
     <meta charset="utf-8">
@@ -22,10 +22,14 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
     <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
 
     <!-- Toastr style -->
-    <link href="css/plugins/toastr/toastr.min.css" rel="stylesheet">
+  <!--  <link rel="stylesheet" href="css/screen.css">
+    <link rel="stylesheet" href="css/style.css">-->
 
+    <link href="css/plugins/toastr/toastr.min.css" rel="stylesheet">
     <link href="css/animate.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
+    <!-- dataTable -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css">
 
 </head>
 
@@ -64,58 +68,71 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
 
 
 
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUser">
+                    <button type="button"  id="addButton" name="addButton" class="btn btn-primary" data-toggle="modal" data-target="#modalForm">
                       + Add New User
                     </button>
+
                 <br>
-                    <div class="modal inmodal" id="addUser" tabindex="-1" role="dialog" aria-hidden="true">
+                <!-- ADD USER POP-UP FORM -->
+                    <div class="modal inmodal" id="modalForm" name="modalForm" tabindex="-1" role="dialog" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content animated flipInY">
                                 <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                                    <h4 class="modal-title">Add User</h4>
-                                    <small class="font-bold">Add new user details in the specific fields below.</small>
+                                    <h4 class="modal-title">Add New Details</h4>
+                                    <small class="font-bold"></small>
                                 </div>
+                                <form action="" id="modal-form" method="post" enctype="multipart/form-data" autocomplete="off">
                                 <div class="modal-body">
                                     <div class="form-group">
                                         <label for="name">Firstname</label>
-                                        <input type="text" name="name" id="name" class="form-control" value="" required=""/>
+                                        <input type="text" name="name" id="name" class="form-control" value="" />
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="name">Lastname</label>
-                                        <input type="text" name="lastname" id="lastname" class="form-control" value="" required=""/>
+                                        <label for="lastname">Lastname</label>
+                                        <input type="text" name="lastname" id="lastname" class="form-control" value="" />
                                     </div>
 
                                     <div class="form-group">
                                         <label for="birthday">Birthday</label>
-                                        <input type="date" name="birthday" id="birthday" value="" required=""/>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="email">Email</label>
-                                        <input type="text" name="name" id="name" class="form-control" value="" required=""/>
+                                        <input type="date" name="birthday" id="birthday" value="" />
                                     </div>
 
                                     <div class="form-group">
                                         <label for="phone">Phone Number</label>
-                                        <input type="number" name="phone" id="phone" class="form-control" value="" required=""/>
+                                        <input type="text" name="phone" id="phone" class="form-control" value="" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="email">Email</label>
+                                        <input type="email" name="email" id="email" class="form-control" value="" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="role" >Role</label>
+                                        <input type="" name="role" id="role" class="form-control"  value="" />
                                     </div>
 
                                     <div class="form-group">
                                         <label for="password">Password</label>
-                                        <input type="password" name="password" id="password" class="form-control" value="" required=""/>
+                                        <input type="password" name="password" id="password"  class="form-control" value="" />
                                     </div>
                                     <div class="form-group">
                                         <label for="confirmPassword">Confirm Password</label>
-                                        <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" value="" required=""/>
+                                        <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" value="" />
                                     </div>
 
                                 </div>
+
+                                    <div id="success"> </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary">Save changes</button>
+                                    <input type="hidden" name="operation" id="operation">
+                                    <input type="hidden" name="member_id" id="member_id">
+                                    <button type="button" name="close" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                    <input type="submit" class="btn btn-primary"  name="add_btn" id="add_btn"  value="Save">
                                 </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -125,24 +142,37 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
 
             <div class="">
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" >
+
+                    <table id="membersTable" class="display" style="width:100%">
                         <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Lastname</th>
-                            <th>Email</th>
+                            <th>ID</th>
+                            <th>First name</th>
+                            <th>Last name</th>
                             <th>Birthday</th>
-                            <th>Phone Number</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Action</th>
+                            <th>Action</th>
                         </tr>
                         </thead>
-                        <tbody>
+                        <tfoot>
                         <tr>
-                            <td></td>
+                            <th>ID</th>
+                            <th>First name</th>
+                            <th>Last name</th>
+                            <th>Birthday</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Action</th>
+                            <th>Action</th>
                         </tr>
-                        </tbody>
+                        </tfoot>
                     </table>
                 </div>
-
+<!-- create modal dialog for display detail info for edit on click button edit-->
             </div>
                 </div>
             </div>
@@ -158,33 +188,298 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
 <!-- Mainly scripts -->
 <script src="js/jquery-3.1.1.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
-<script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
-<script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
 
-<!-- Custom and plugin javascript -->
-<script src="js/inspinia.js"></script>
-<script src="js/plugins/pace/pace.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+
+<!--<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>-->
+<script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="js/plugins/slimscroll/jquery.slimscroll.js"></script>
+
+<script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
 
 <!-- jQuery UI -->
 <script src="js/plugins/jquery-ui/jquery-ui.min.js"></script>
 
 <!-- Toastr -->
 <script src="js/plugins/toastr/toastr.min.js"></script>
+<!-- Custom and plugin javascript -->
+<script src="js/inspinia.js"></script>
+<script src="js/plugins/pace/pace.min.js"></script>
+
+<script src="js/jquery.validate.js"></script>
+<script src="js/modal-form.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"> </script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"> </script>
 <script>
+
+    var dataTable;
     $(document).ready(function() {
-        if (!localStorage.getItem('notificationShown')) {
-            setTimeout(function () {
-                toastr.options = {
-                    closeButton: true,
-                    progressBar: true,
-                    showMethod: 'slideDown',
-                    timeOut: 4000
-                };
-                toastr.success('Welcome', 'Intership project');
-                localStorage.setItem('notificationShown', true);
-            }, 1300);
+        dataTable = $('#membersTable').DataTable({
+            "paging": true,
+            "processing": true,
+            "serverSide": true,
+            "order": [],
+            "info": true,
+            "ajax": {
+                url: "backend/fetchTable.php",
+                type: "POST"
+            },
+            "columnDefs": [
+                {
+                    "targets": [0, 3, 4],
+                    "orderable": false
+                }
+            ]
+        });
+
+
+        <!--script js for editing data-->
+
+
+        $.validator.addMethod("passwordRule", function (value, element) {
+            return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value);
+        }, 'Password must contain at least one uppercase, one lowercase, one digit, one special character')
+
+        $.validator.addMethod("lettersOnly", function (value, element) {
+            return /^[a-zA-Z]+$/.test(value);
+        }, 'Only letters allowed!')
+
+        $.validator.addMethod("phoneNum", function (value, element) {
+            return /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/.test(value);
+        }, 'Phone number is not valid!')
+
+        $.validator.addMethod("over18", function(value) {
+            var birthday = new Date(value);
+
+            var today = new Date();
+            var age = today.getFullYear() - birthday.getFullYear();
+            var monthDiff = today.getMonth() - birthday.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthday.getDate())) {
+                age--;
+            }
+            return age >=18;
+        });
+
+        $("#modal-form").validate({
+            rules: {
+                name: {
+                    required: true,
+                    lettersOnly: true
+                },
+                lastname: {
+                    required: true,
+                    lettersOnly: true
+                },
+                birthday: {
+                    required: true,
+                    over18: true
+                },
+                phone: {
+                    required: true,
+                    phoneNum: true
+                },
+                email: {
+                    required: true,
+                    email: true
+                },
+                password: {
+                    required: true,
+                    minlength: 8,
+                    passwordRule: true
+                },
+                confirmPassword: {
+                    required: true,
+                    minlength: 8,
+                    equalTo: '#password'
+                },
+
+            },
+            messages: {
+                name: {
+                    required: "Please enter user firstname!",
+                    lettersOnly: "Name should include letters only!"
+                },
+                lastname: {
+                    required: "Please enter user lastname!",
+                    lettersOnly: "Lastname should include letters only!"
+                },
+                birthday: {
+                    required: "Please enter user birthday!",
+                    over18: "User must be +18 years old!"
+                },
+                phone: {
+                    required: "Please enter user phone number!",
+                    phoneNum: "Enter a valid phone number!"
+                },
+                password: {
+                    required: "Please provide a password!",
+                    minlength: "Password should be at least 8 characters long",
+                    passwordRule: "Password should contain at least 1 uppercase , 1 lowercase, 1 digit , and 1 special character and also be 8 characters long!"
+                },
+                confirmPassword: {
+                    required: "Please confirm password!",
+                    minlength: "Password should be at least 8 characters long",
+                    equalTo: "Password does not match, please enter the same password as above!"
+                }
+
+            }
+
+        })
+    });
+
+   /* $(document).on('submit', '#modal-form', function(event){
+        event.preventDefault();
+        var id = $('#id').val();
+        var name = $('#name').val();
+        var lastname = $('#lastname').val();
+        var birthday = $('#birthday').val();
+        var phone = $('#phone').val();
+        var email = $('#email').val();
+        var password = $('#password').val();
+
+        if(name != '' && lastname != '' && birthday!='' && phone!='' && email != '' && password!='')
+        {
+            $.ajax({
+                url:"backend/addUser.php",
+                method:'POST',
+                data:new FormData(this),
+                contentType:false,
+                processData:false,
+                success:function(data)
+                {
+                    $('#modal-form')[0].reset();
+                    $('#modalForm').modal('hide');
+                    dataTable.ajax.reload();
+                }
+            });
+        }
+        else
+        {
+            alert("Name, Lastname, Birthday, Phone,Email, Password Fields are Required");
         }
     });
+
+    $(document).on('click', '.editBtn', function(){
+        var member_id = $(this).attr("id");
+        $.ajax({
+            url:"fetch_single.php",
+            method:"POST",
+            data:{member_id:member_id},
+            dataType:"json",
+            success:function(data)
+            {
+                $('#modalForm').modal('show');
+                $('#id').val(data.id);
+                $('#name').val(data.name);
+                $('#email').val(data.email);
+                $('#phone').val(data.phone);
+                $('.modal-title').text("Edit Member Details");
+                $('#member_id').val(member_id);
+                $('#add_btn').val("Save");
+                $('#operation').val("Edit");
+            }
+        })
+    });
+
+    $(document).on('click', '.delete_btn', function(){
+        var member_id = $(this).attr("id");
+        if(confirm("Are you sure you want to delete this user?"))
+        {
+            $.ajax({
+                url:"backend/delete.php",
+                method:"POST",
+                data:{member_id:member_id},
+                success:function(data)
+                {
+                    dataTable.ajax.reload();
+                }
+            });
+        }
+        else
+        {
+            return false;
+        }
+    });*/
+
+$('#add_btn').click(function(){
+    $('#modal-form')[0].reset();
+    $('.modal-title').text("Add New Details");
+    $('#add_btn').val("Save");
+    $('#operation').val("Save");
+});
+
+    $('#add_btn').click(function (e) {
+        $('#modal-form')[0].reset();
+        $('.modal-title').text("ADD NEW USER")
+        e.preventDefault();
+        if ($(this).valid()) {
+            $.ajax({
+                url: '../inspina/backend/addUser.php',
+                type: 'POST',
+                data: $("#modal-form").serialize(),
+                dataType: "text",
+                success:function (response){
+
+                    $('#success').text("Form Submit Success!");
+                    $('#modal-form')[0].reset();
+                    $('#modalForm').modal('hide');
+                    dataTable.ajax.reload();
+
+                }
+            })
+        }
+
+    });
+
+    $(document).on('click', '.update', function(){
+        var member_id = $(this).attr("id");
+        $.ajax({
+            url:"backend/fetch_single.php",
+            method:"POST",
+            data:{member_id:member_id},
+            dataType:"json",
+            success:function(data)
+            {
+                $('#modalForm').modal('show');
+                $('#id').val(data.id);
+                $('#name').val(data.name);
+                $('#lastname').val(data.lastname);
+                $('#birthday').val(data.birthday);
+                $('#phone').val(data.phone);
+                $('#email').val(data.email);
+                $('.modal-title').text("Edit Member Details");
+                $('#member_id').val(member_id);
+                $('#action').val("Save");
+                $('#operation').val("Edit");
+            }
+        })
+    });
+
+
+
+  $('#delete').click(function (e) {
+      e.preventDefault();
+      if ($(this).valid()) {
+          $.ajax({
+              url: '../inspina/backend/deleteUser.php',
+              type: 'POST',
+              data: $("#modal-form").serialize(),
+              dataType: "text",
+              success:function (response){
+                  $('#success').text("User deleted Successfully!");
+                  dataTable.ajax.reload();
+              }
+          })
+      }
+
+
+  });
+
+
+
 </script>
+
+
 </body>
 </html>
