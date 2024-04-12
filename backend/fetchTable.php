@@ -57,8 +57,8 @@ while ($row = mysqli_fetch_array($query)) {
     $subdata[] = $row[10]; //role
     // create event on click button edit in cell datatable for display modal dialog
     //$row[0] is in table on database
-    $subdata[] = '<button type="button" id="'.$row[0].'" name="update" class="btn btn-primary btn-sm update" data-toggle="modal" data-target="#modalForm" data-id="' . $row[0] . '"> <i class="glyphicon glyphicon-pencil">&nbsp;</i>Edit</button>';
-    $subdata[] = '<button type="button" id="'.$row[0].'" name="delete" class="btn btn-danger btn-sm delete" onclick="deleteUser(' . $row[0] . ')"><i class="glyphicon glyphicon-trash">&nbsp;</i>Delete</button>';
+    $subdata[] = '<button type="button"  name="update" data-id="'. $row[0].'" class="btn btn-primary btn-sm update" <!--data-toggle="modal" data-target="#modalForm" --> <i class="glyphicon glyphicon-pencil">&nbsp;</i>Edit</button>';
+    $subdata[] = '<button type="button"  name="delete" data-id="'. $row[0].'" class="btn btn-danger btn-sm delete" ><i class="glyphicon glyphicon-trash">&nbsp;</i>Delete</button>';
 
     $data[] = $subdata;
 }

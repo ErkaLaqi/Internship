@@ -111,7 +111,12 @@ include "include/dbConnection.php";
 
                                     <div class="form-group">
                                         <label for="role" >Role</label>
-                                        <input type="" name="role" id="role" class="form-control"  value="" />
+                                        <!--<input type="" name="role" id="role" class="form-control"  value="" />-->
+                                        <select class="" name="role">
+                                            <option value="" selected hidden></option>
+                                            <option value="user">User</option>
+                                            <option value="admin">Admin</option>
+                                        </select>
                                     </div>
 
                                     <div class="form-group">
@@ -129,8 +134,8 @@ include "include/dbConnection.php";
                                 <div class="modal-footer">
                                     <input type="hidden" name="operation" id="operation">
                                     <input type="hidden" name="member_id" id="member_id">
+                                    <input type="submit" class="btn btn-primary"  name="action" id="action"  value="Save">
                                     <button type="button" name="close" class="btn btn-danger" data-dismiss="modal">Close</button>
-                                    <input type="submit" class="btn btn-primary"  name="add_btn" id="add_btn"  value="Save">
                                 </div>
                                 </form>
                             </div>
@@ -206,8 +211,8 @@ include "include/dbConnection.php";
 <script src="js/inspinia.js"></script>
 <script src="js/plugins/pace/pace.min.js"></script>
 
-<script src="js/jquery.validate.js"></script>
-<script src="js/modal-form.js"></script>
+
+<!--<script src="js/modal-form.js"></script>-->
 
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"> </script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"> </script>
@@ -215,6 +220,7 @@ include "include/dbConnection.php";
 
     var dataTable;
     $(document).ready(function() {
+
         dataTable = $('#membersTable').DataTable({
             "paging": true,
             "processing": true,
@@ -238,7 +244,7 @@ include "include/dbConnection.php";
 
 
         $.validator.addMethod("passwordRule", function (value, element) {
-            return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value);
+            return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[.@$!%*?&])[A-Za-z\d.@$!%*?&]{8,}$/.test(value);
         }, 'Password must contain at least one uppercase, one lowercase, one digit, one special character')
 
         $.validator.addMethod("lettersOnly", function (value, element) {
@@ -326,155 +332,95 @@ include "include/dbConnection.php";
             }
 
         })
-    });
 
-   /* $(document).on('submit', '#modal-form', function(event){
-        event.preventDefault();
-        var id = $('#id').val();
-        var name = $('#name').val();
-        var lastname = $('#lastname').val();
-        var birthday = $('#birthday').val();
-        var phone = $('#phone').val();
-        var email = $('#email').val();
-        var password = $('#password').val();
+        $('#addButton').click(function(){
+            $('#modal-form')[0].reset();
+            $('.modal-title').text("Add New User Details");
+            $('#action').val("Save");
+            $('#operation').val("Save");
+        });
 
-        if(name != '' && lastname != '' && birthday!='' && phone!='' && email != '' && password!='')
-        {
-            $.ajax({
-                url:"backend/addUser.php",
-                method:'POST',
-                data:new FormData(this),
-                contentType:false,
-                processData:false,
-                success:function(data)
-                {
-                    $('#modal-form')[0].reset();
-                    $('#modalForm').modal('hide');
-                    dataTable.ajax.reload();
-                }
-            });
-        }
-        else
-        {
-            alert("Name, Lastname, Birthday, Phone,Email, Password Fields are Required");
-        }
-    });
+        $('#action').click(function (e) {
+            $('.modal-title').text("ADD NEW USER")
+            e.preventDefault();
+            if ($(this).valid()) {
+                $.ajax({
+                    url: '../inspina/backend/addUser.php',
+                    type: 'POST',
+                    data: $("#modal-form").serialize(),
+                    dataType: "text",
+                    success:function (response){
 
-    $(document).on('click', '.editBtn', function(){
-        var member_id = $(this).attr("id");
-        $.ajax({
-            url:"fetch_single.php",
-            method:"POST",
-            data:{member_id:member_id},
-            dataType:"json",
-            success:function(data)
-            {
-                $('#modalForm').modal('show');
-                $('#id').val(data.id);
-                $('#name').val(data.name);
-                $('#email').val(data.email);
-                $('#phone').val(data.phone);
-                $('.modal-title').text("Edit Member Details");
-                $('#member_id').val(member_id);
-                $('#add_btn').val("Save");
-                $('#operation').val("Edit");
+                        $('#success').text("Form Submit Success!");
+                        $('#modalForm').modal('hide');
+                        dataTable.ajax.reload();
+
+                    }
+                });
             }
-        })
-    });
 
-    $(document).on('click', '.delete_btn', function(){
-        var member_id = $(this).attr("id");
-        if(confirm("Are you sure you want to delete this user?"))
-        {
+        });
+
+        $(document).on('click', '.update', function(){
+            var member_id = $(this).data("id");
+
+
             $.ajax({
-                url:"backend/delete.php",
+                url:"../inspina/backend/fetch_single.php",
                 method:"POST",
                 data:{member_id:member_id},
+                dataType:"json",
                 success:function(data)
                 {
-                    dataTable.ajax.reload();
-                }
-            });
-        }
-        else
-        {
-            return false;
-        }
-    });*/
+                    /*$('#name').val(data.name);
+                    $('#lastname').val(data.lastname);
+                    $('#birthday').val(data.birthday);
+                    $('#phone').val(data.phone);
+                    $('#email').val(data.email);
+                    $('#role').val(data.role);*/
+                   $.each($('#modalForm').find(':input'), function (i, e){
+                        const el = $(e);
+                        const field = el.attr('id');
+                        el.val(data[field]).trigger('change');
+                    });
 
-$('#add_btn').click(function(){
-    $('#modal-form')[0].reset();
-    $('.modal-title').text("Add New Details");
-    $('#add_btn').val("Save");
-    $('#operation').val("Save");
-});
-
-    $('#add_btn').click(function (e) {
-        $('#modal-form')[0].reset();
-        $('.modal-title').text("ADD NEW USER")
-        e.preventDefault();
-        if ($(this).valid()) {
-            $.ajax({
-                url: '../inspina/backend/addUser.php',
-                type: 'POST',
-                data: $("#modal-form").serialize(),
-                dataType: "text",
-                success:function (response){
-
-                    $('#success').text("Form Submit Success!");
-                    $('#modal-form')[0].reset();
-                    $('#modalForm').modal('hide');
-                    dataTable.ajax.reload();
-
+                    $('#modalForm').modal('show');
+                    $('.modal-title').text("Edit Member Details");
+                    $('#member_id').val(member_id);
+                    $('#action').val("Save");
+                    $('#operation').val("Edit");
                 }
             })
-        }
+        });
 
-    });
-
-    $(document).on('click', '.update', function(){
-        var member_id = $(this).attr("id");
-        $.ajax({
-            url:"backend/fetch_single.php",
-            method:"POST",
-            data:{member_id:member_id},
-            dataType:"json",
-            success:function(data)
-            {
-                $('#modalForm').modal('show');
-                $('#id').val(data.id);
-                $('#name').val(data.name);
-                $('#lastname').val(data.lastname);
-                $('#birthday').val(data.birthday);
-                $('#phone').val(data.phone);
-                $('#email').val(data.email);
-                $('.modal-title').text("Edit Member Details");
-                $('#member_id').val(member_id);
-                $('#action').val("Save");
-                $('#operation').val("Edit");
-            }
+        $(document).on('hidden.bs.modal', '#modalForm', function (e) {
+            $(this).find(':input').val('').trigger('change');
         })
+
+
+        $(document).on('click', '.delete', function(){
+            var member_id = $(this).attr("id");
+            if(confirm("Are you sure you want to delete this user?"))
+            {
+                $.ajax({
+                    url:"backend/deleteUser.php",
+                    method:"POST",
+                    data:{member_id:member_id},
+                    success:function(data)
+                    {
+                        dataTable.ajax.reload();
+                    }
+                });
+            }
+            else
+            {
+                return false;
+            }
+        });
     });
 
 
 
-  $('#delete').click(function (e) {
-      e.preventDefault();
-      if ($(this).valid()) {
-          $.ajax({
-              url: '../inspina/backend/deleteUser.php',
-              type: 'POST',
-              data: $("#modal-form").serialize(),
-              dataType: "text",
-              success:function (response){
-                  $('#success').text("User deleted Successfully!");
-                  dataTable.ajax.reload();
-              }
-          })
-      }
-
-
-  });
 
 
 

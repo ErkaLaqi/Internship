@@ -1,4 +1,5 @@
 <?php
+
 function get_total_all_records()
 {
     global $db_conn;
