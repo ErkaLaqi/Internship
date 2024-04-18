@@ -39,7 +39,7 @@ if(isset($_SESSION['id'])){
 
             <div class="col-md-6">
                 <h2 class="font-bold">Already have an account?</h2>
-                <h3 class="font-bold">Login to experience .......</h3>
+                <h3 class="font-bold">Login here</h3>
 
             </div>
             <div class="col-md-6">

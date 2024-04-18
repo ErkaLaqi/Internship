@@ -1,13 +1,8 @@
 <?php
 global $db_conn;
 
-include "include/dbConnection.php";
-//
-//if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
-//    header("Location: login.php");
-//} elseif (empty($_SESSION['email']) || empty($_SESSION['id'])) {
-//    header("Location: login.php");
-//}
+include "dbConnection.php";
+include "loginCheck.php";
 
 $email = $_SESSION['email'];
 $id = $_SESSION['id'];
@@ -55,23 +50,27 @@ if ($result->num_rows > 0) {
             <li>
                 <a href="home.php"><i class="fa fa-home" style="font-size:20px"></i><span class="nav-label">Home</span></a>
                 </li>
+            <li>
+                <a href="dashboard.php"><i class="fa fa-th-large" style="font-size:20px"></i><span class="nav-label">Users</span></a>
 
-            <?php if($userDetails['role'] === 'admin'){
-                ?>
+            </li>
+
+          <!--  <?php /*if($userDetails['role'] === 'admin'){
+                */?>
                 <li>
                     <a href="dashboard.php"><i class="fa fa-th-large" style="font-size:20px"></i><span class="nav-label">Dashboard</span></a>
 
                 </li>
-            <?php }
+            <?php /*}
             elseif ($userDetails['role'] === 'user'){
-            ?>
+            */?>
                 <li>
                     <a href="contacts.php"><i class="fa fa-th-large" style="font-size:20px"></i><span class="nav-label">Contact an Admin</span></a>
 
                 </li>
-            <?php }
+            --><?php /*}
 
-            ?>
+            */?>
 
 
 

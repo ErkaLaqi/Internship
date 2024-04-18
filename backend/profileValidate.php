@@ -34,6 +34,7 @@ if ($page === "profileUpdate") {
     $specialChars = preg_match('@[^\w]@', $password);
     $number = preg_match('/^[0-9]*$/', $phone);
     $phoneNum = preg_match('@^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$@', $phone);
+
     $select = "select * from users where id='$id'";
 
     $sql = mysqli_query($db_conn, $select);

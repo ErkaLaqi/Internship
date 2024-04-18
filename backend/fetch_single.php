@@ -18,15 +18,5 @@ if (isset($_POST["member_id"])) {
         echo json_encode(array("status" => "error", "message" => "Failed to fetch user data."));
     }
 }
-/*if(isset($_POST["member_id"])) {
-    $member_id = $_POST["member_id"];
-    $query = "SELECT * FROM users WHERE id = '$member_id' LIMIT 1";
-    $result = mysqli_query($db_conn, $query);
-    if ($result && mysqli_num_rows($result) > 0) {
-        $row = mysqli_fetch_assoc($result);
-        echo json_encode($row);
-    } else {
-        echo json_encode(array()); // Return empty array if no result found
-    }
-}*/
+
 ?>

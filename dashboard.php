@@ -2,11 +2,13 @@
 global $db_conn;
 session_start();
 include "include/dbConnection.php";
-/*if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
-    header("Location: login.php");
-} elseif (empty($_SESSION['email']) || empty($_SESSION['id'])) {
-    header("Location: login.php");
-}*/
+
+$validationErrors = ['name' => '', 'lastname' => '', 'email' => '', 'password' => '',
+    'confirmPassword' => '', 'phone' => '', 'register' => '', 'birthday' => '', 'role' => ''];
+
+if (isset($_SESSION['modal_form_validations'])) {
+    $validationErrors = array_merge($validationErrors, $_SESSION['modal_form_validations']);
+    unset($_SESSION['modal_form_validations']); }
 ?>
 
 
@@ -62,15 +64,14 @@ include "include/dbConnection.php";
             <div class="container">
                 <br>
 
-           <!--     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="addUserProfile">
-                    Add User Profile
-                </button>-->
 
-
-
+                <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'manager') : ?>
                     <button type="button"  id="addButton" name="addButton" class="btn btn-primary" data-toggle="modal" data-target="#modalForm">
-                      + Add New User
+                        + Add New User
                     </button>
+                <?php endif; ?>
+
+
 
                 <br>
                 <!-- ADD USER POP-UP FORM -->
@@ -82,50 +83,75 @@ include "include/dbConnection.php";
                                     <h4 class="modal-title">Add New Details</h4>
                                     <small class="font-bold"></small>
                                 </div>
-                                <form action="" id="modal-form" method="post" enctype="multipart/form-data" autocomplete="off">
+                                <form action="backend/addUser.php" id="modal-form" method="post" enctype="multipart/form-data" autocomplete="off">
                                 <div class="modal-body">
                                     <div class="form-group">
                                         <label for="name">Firstname</label>
-                                        <input type="text" name="name" id="name" class="form-control" value="" />
+                                        <input type="text" name="name" id="name" class="form-control" autocomplete="given-name" value="" />
+                                        <div class="errorMessage">  <?php echo $validationErrors['name']; ?>
+                                        </div>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="lastname">Lastname</label>
-                                        <input type="text" name="lastname" id="lastname" class="form-control" value="" />
+                                        <input type="text" name="lastname" id="lastname" class="form-control" autocomplete="family-name" value="" />
+                                        <div class="errorMessage">  <?php echo $validationErrors['lastname']; ?>
+                                        </div>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="birthday">Birthday</label>
-                                        <input type="date" name="birthday" id="birthday" value="" />
+                                        <input type="date" name="birthday" id="birthday" autocomplete="off" value="" />
+                                        <div class="errorMessage">  <?php echo $validationErrors['birthday']; ?>
+                                        </div>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="phone">Phone Number</label>
-                                        <input type="text" name="phone" id="phone" class="form-control" value="" />
+                                        <input type="text" name="phone" id="phone" class="form-control" autocomplete="off" value="" />
+                                        <div class="errorMessage"> <?php echo $validationErrors['phone']; ?>
+                                        </div>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="email">Email</label>
-                                        <input type="email" name="email" id="email" class="form-control" value="" />
+                                        <input type="email" name="email" id="email" class="form-control" autocomplete="off" value="" />
+                                        <div class="errorMessage"> <?php echo $validationErrors['email']; ?>
+                                        </div>
                                     </div>
 
-                                    <div class="form-group">
-                                        <label for="role" >Role</label>
-                                        <!--<input type="" name="role" id="role" class="form-control"  value="" />-->
-                                        <select class="" name="role">
-                                            <option value="" selected hidden></option>
-                                            <option value="user">User</option>
-                                            <option value="admin">Admin</option>
-                                        </select>
-                                    </div>
+                                    <?php
+                                    if($_SESSION['role'] == 'admin'){?>
+                                        <div class="form-group">
+                                            <label class="small mb-1" for="role">Role</label>
+                                            <select class="form-control" name="role" id="role">
+                                                <option value="admin">Admin</option>
+                                                <option value="manager">Manager</option>
+                                                <option value="user" >User</option>
+                                            </select>
+                                        </div>
+                                    <?php }
+                                    ?>
+                                    <?php
+                                    if($_SESSION['role'] == 'manager'){?>
+                                        <div class="form-group">
+                                            <label class="small mb-1" for="role">Role</label>
+                                            <input class="form-control" id="role" name = 'role' type="text" value="User" readonly>
+                                        </div>
+                                    <?php }
+                                    ?>
 
                                     <div class="form-group">
                                         <label for="password">Password</label>
-                                        <input type="password" name="password" id="password"  class="form-control" value="" />
+                                        <input type="password" name="password" id="password"  class="form-control" autocomplete="off" value="" />
+                                        <div class="errorMessage"> <?php echo $validationErrors['password']; ?>
+                                        </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="confirmPassword">Confirm Password</label>
-                                        <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" value="" />
+                                        <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" autocomplete="off" value="" />
+                                        <div class="errorMessage">  <?php echo $validationErrors['confirmPassword']; ?>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -159,7 +185,7 @@ include "include/dbConnection.php";
                             <th>Email</th>
                             <th>Role</th>
                             <th>Action</th>
-                            <th>Action</th>
+
                         </tr>
                         </thead>
                         <tfoot>
@@ -172,7 +198,7 @@ include "include/dbConnection.php";
                             <th>Email</th>
                             <th>Role</th>
                             <th>Action</th>
-                            <th>Action</th>
+
                         </tr>
                         </tfoot>
                     </table>
@@ -351,7 +377,7 @@ include "include/dbConnection.php";
                     dataType: "text",
                     success:function (response){
 
-                        $('#success').text("Form Submit Success!");
+                        /*$('#success').text("Form Submit Success!");*/
                         $('#modalForm').modal('hide');
                         dataTable.ajax.reload();
 
@@ -377,12 +403,15 @@ include "include/dbConnection.php";
                     $('#birthday').val(data.birthday);
                     $('#phone').val(data.phone);
                     $('#email').val(data.email);
-                    $('#role').val(data.role);*/
-                   $.each($('#modalForm').find(':input'), function (i, e){
-                        const el = $(e);
-                        const field = el.attr('id');
-                        el.val(data[field]).trigger('change');
-                    });
+                    $('#role').val(data.role);
+                    $('#password').closest('.form-group').hide();
+                    $('#confirmPassword').closest('.form-group').hide();*/
+
+                     $.each($('#modalForm').find(':input'), function (i, e){
+                          const el = $(e);
+                          const field = el.attr('id');
+                          el.val(data[field]).trigger('change');
+                      });
 
                     $('#modalForm').modal('show');
                     $('.modal-title').text("Edit Member Details");
@@ -399,11 +428,11 @@ include "include/dbConnection.php";
 
 
         $(document).on('click', '.delete', function(){
-            var member_id = $(this).attr("id");
+            var member_id = $(this).data("id");
             if(confirm("Are you sure you want to delete this user?"))
             {
                 $.ajax({
-                    url:"backend/deleteUser.php",
+                    url:"../inspina/backend/deleteUser.php",
                     method:"POST",
                     data:{member_id:member_id},
                     success:function(data)

@@ -84,12 +84,12 @@ while ($row = mysqli_fetch_array($query)) {
 
 
 //if role== admin, show update, and delete button, else if role == manager or user show only edit , else if role== user dont show any of the buttons
-if ($role === 'admin') {
-    $subdata[] = '<button type="button" name="update" data-id="'. $row[0] .'" class="btn btn-primary btn-sm update"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</button>' .
-                 '<button type="button" name="delete" data-id="'. $row[0] .'" class="btn btn-danger btn-sm delete"><i class="glyphicon glyphicon-trash"></i>&nbsp;Delete</button>';
-} else if ($role === 'manager' || $role === 'user' ) {
-    $subdata[] = '<button type="button" name="update" data-id="'. $row[0] .'" class="btn btn-primary btn-sm update"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</button>';
-}
+    if ($role === 'admin') {
+        $subdata[] = '<button type="button" name="update" data-id="'. $row[0] .'" class="btn btn-primary btn-sm update"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</button>' .
+            '<button type="button" name="delete" data-id="'. $row[0] .'" class="btn btn-danger btn-sm delete"><i class="glyphicon glyphicon-trash"></i>&nbsp;Delete</button>';
+    } else if ($role === 'manager' || $role === 'user' ) {
+        $subdata[] = '<button type="button" name="update" data-id="'. $row[0] .'" class="btn btn-primary btn-sm update"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</button>';
+    }
     $data[] = $subdata;
 }
 
