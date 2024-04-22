@@ -83,12 +83,12 @@ if (isset($_POST["operation"])) {
             exit;
         }
 
-        $allowed_roles = array("user", "manager", "admin");
+       /* $allowed_roles = array("user", "manager", "admin");
         if (!in_array($role, $allowed_roles)) {
             $validationErrors['role'] = "Invalid role provided";
             $_SESSION['modal_form_validations'] = $validationErrors;
             exit;
-        }
+        }*/
 
         $loggedInUserId = $_SESSION['id'];
         mysqli_query($db_conn, "INSERT INTO users(name, lastname, birthday, phone, email, password, role, supervisor_id) 

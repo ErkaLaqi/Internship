@@ -25,12 +25,32 @@ if(isset($_POST['operation'])){
             6 => 'role',
             7 => 'username'
         );
-        $sql = "SELECT id as 'id', name as 'name', lastname as 'lastname',birthday as 'birthday', phone as 'phone',  email as 'email', role as 'role', username as 'username' FROM users WHERE role = 'user'";
+
+       /* $loggedInUserId = $_SESSION['id'];
+        $sql = "SELECT * FROM users WHERE id = $loggedInUserId limit 1";
+        $role = $_SESSION['role'];
+        if ($role === 'admin') {
+            // If supervisor_id is null, fetch all records
+            $sql = "SELECT * FROM users where 1 = 1";
+        } else if ($role === 'manager') {
+            // If supervisor_id is not null, fetch records where supervisor_id matches the logged-in user's ID
+            $sql = "SELECT * FROM users WHERE supervisor_id = $loggedInUserId OR id = $loggedInUserId";}
+        else {
+            $sql = "SELECT * FROM users WHERE id = $loggedInUserId ";
+        }
+        $query = mysqli_query($db_conn, $sql);
+
+        if ($loggedInUserId === null) {
+            $sql = "SELECT * FROM users where 1 = 1 ";
+        }*/
+
+
+        $sql = "SELECT id as 'id', name as 'name', lastname as 'lastname',birthday as 'birthday', phone as 'phone',  email as 'email', role as 'role', username as 'username' FROM users WHERE role = 'user' || role = 'manager'";
         $query = mysqli_query($db_conn, $sql);
         $totalData = mysqli_num_rows($query);
         $totalFilter = $totalData;
 
-        $sql = "SELECT id as 'id', name as 'name', lastname as 'lastname', birthday as 'birthday', phone as 'phone', email as 'email', role as 'role', username as 'username' FROM users WHERE role = 'user'";
+        $sql = "SELECT id as 'id', name as 'name', lastname as 'lastname', birthday as 'birthday', phone as 'phone', email as 'email', role as 'role', username as 'username' FROM users WHERE role = 'user' || role = 'manager'";
 
         if (!empty($request['search']['value'])) {
 
@@ -81,16 +101,9 @@ if(isset($_POST['operation'])){
                 "username" => $row['username'], // Include username in the data array
                 "action" => '
             <div class="btn-group">
-                <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle">Action <span class="caret"></span></button>
-                <ul class="dropdown-menu">
-                    <li>
-                        <button type="button" name="update" id="' . $row['id'] . '" class="btn btn-w-m btn-xm update-user-btn"><i class="fa fa-edit">&nbsp;</i>Edit</button>
-                    </li>
-                    <li class="divider"></li>
-                    <li>
-                        <button type="button" name="delete" id="' . $row['id'] . '" class="btn btn-w-m btn-xm delete-user-btn" ><i class="fa fa-trash">&nbsp;</i>Delete</button>
-                    </li>
-                </ul>
+                        <button type="button" name="update" id="' . $row['id'] . '" class="btn btn-primary btn-sm update"><i class="glyphicon glyphicon-pencil">&nbsp;</i>Edit</button>
+              
+                        <button type="button" name="delete" id="' . $row['id'] . '" class="btn btn-danger btn-sm delete" ><i class="glyphicon glyphicon-trash">&nbsp;</i>Delete</button>
             </div>
         '
             );
@@ -132,21 +145,7 @@ if(isset($_POST['operation'])){
 
             $result = mysqli_query($db_conn, $query);
 
-           /* if($result){
-                $subordinate_id = mysqli_insert_id($db_conn);
-                $hierarchy_query = "INSERT INTO hierarchy (supervisor_id, subordinate_id)
-                                VALUES ('$supervisor_id', '$subordinate_id')";
-                $hierarchy_result = mysqli_query($db_conn, $hierarchy_query);
 
-                if($hierarchy_result){
-                    echo 'Your record has been saved. ';
-                } else {
-                    echo "Failed to save hierarchy information.";
-                }
-            }
-            else{
-                echo "Your record has not been saved";
-            }*/
         }
     }
 
@@ -158,8 +157,8 @@ if(isset($_POST['operation'])){
             $birthday = $_POST['birthday'];
             $phone = $_POST['phone'];
             $email = $_POST['email'];
-            $selectedRole = $_POST['role'];
-            /*            print_r($selectedRole);
+            $role = $_POST['role'];
+            /*            print_r($role);
                         exit;*/
             $password = $_POST['password'];
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
@@ -175,7 +174,8 @@ if(isset($_POST['operation'])){
                             lastname = '$lastname',
                             birthday ='$birthday' ,
                             phone ='$phone' ,
-                            role ='$selectedRole' ";
+                            email ='$email' ,
+                            role ='$role' ";
 
             if(!empty($password)){
                 $update .= ", password = '$hashed_password'";
@@ -211,13 +211,13 @@ if(isset($_POST['operation'])){
 
     if($_POST['operation'] == "Delete") {
         if (isset($_POST['member_id'])) {
-            $id = $_POST['member_id'];
-           /* $query = "DELETE FROM hierarchy
+         /*   $id = $_POST['member_id'];
+           $query = "DELETE FROM hierarchy
             WHERE subordinate_id = $id OR supervisor_id = $id";
 
-            $res = $db_conn->query($query);*/
+            $res = $db_conn->query($query);
 
-            if($res){
+           if($res){
                 $sql = " DELETE FROM users
             WHERE id = $id";
 
@@ -231,6 +231,16 @@ if(isset($_POST['operation'])){
             }
             else{
                 die($db_conn->error);
+            }*/
+            $member_id = mysqli_real_escape_string($db_conn, $_POST["member_id"]);
+            $query = "DELETE FROM users WHERE id = '$member_id'";
+            $result = mysqli_query($db_conn, $query);
+            if ($result) {
+                // Deletion successful
+                echo json_encode(array("status" => "success", "message" => "User deleted successfully!"));
+            } else {
+                // Error occurred during deletion
+                echo json_encode(array("status" => "error", "message" => "Error deleting user!"));
             }
 
         }

@@ -77,21 +77,108 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
             </div>
         </div>
         <div class="wrapper wrapper-content animated fadeInRight">
-            <?php
-            if($_SESSION['role'] == 'admin' || $_SESSION['role'] == 'manager'){?>
-                <div align="left">
-                    <button type="button" id="add_button" class="btn btn-primary">
-                        <i class="fa fa-plus">&nbsp;</i> Add New User
-                    </button>
-                </div>
-            <?php }
-            ?>
-<br>
+            <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'manager') : ?>
+                <button type="button"  id="addButton" name="addButton" class="btn btn-primary" data-toggle="modal" data-target="#modalForm">
+                    + Add New User
+                </button>
+            <?php endif; ?>
+<br> <br>
             <div class="row">
                 <div class="col-lg-12">
                     <div class="ibox float-e-margins">
 
+                        <div class="modal inmodal" id="modalId" name="modalId" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content animated flipInY">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" id="close" name="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                        <h4 class="modal-title">Add New Details</h4>
+                                        <small class="font-bold"></small>
+                                    </div>
+                                    <form action="backend/addUser.php" id="modal-form" method="post" enctype="multipart/form-data" autocomplete="off">
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label for="name">Firstname</label>
+                                                <input type="text" name="name" id="name" class="form-control" autocomplete="given-name" value="" />
+<!--                                                <div class="errorMessage">  --><?php /*echo $validationErrors['name']; */?><!--
+                                                </div>-->
+                                            </div>
 
+                                            <div class="form-group">
+                                                <label for="lastname">Lastname</label>
+                                                <input type="text" name="lastname" id="lastname" class="form-control" autocomplete="family-name" value="" />
+                                               <!-- <div class="errorMessage">  <?php /*echo $validationErrors['lastname']; */?>
+                                                </div>-->
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="birthday">Birthday</label>
+                                                <input type="date" name="birthday" id="birthday" autocomplete="off" value="" />
+                                               <!-- <div class="errorMessage">  <?php /*echo $validationErrors['birthday']; */?>
+                                                </div>-->
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="phone">Phone Number</label>
+                                                <input type="text" name="phone" id="phone" class="form-control" autocomplete="off" value="" />
+                                                <!--<div class="errorMessage"> <?php /*echo $validationErrors['phone']; */?>
+                                                </div>-->
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="email">Email</label>
+                                                <input type="email" name="email" id="email" class="form-control" autocomplete="off" value="" />
+                                                <!--<div class="errorMessage"> <?php /*echo $validationErrors['email']; */?>
+                                                </div>-->
+                                            </div>
+
+                                            <?php
+                                            if($_SESSION['role'] == 'admin'){?>
+                                                <div class="form-group">
+                                                    <label class="small mb-1" for="role">Role</label>
+                                                    <select class="form-control" name="role" id="role">
+                                                        <option value="admin">Admin</option>
+                                                        <option value="manager">Manager</option>
+                                                        <option value="user" >User</option>
+                                                    </select>
+                                                </div>
+                                            <?php }
+                                            ?>
+                                            <?php
+                                            if($_SESSION['role'] == 'manager'){?>
+                                                <div class="form-group">
+                                                    <label class="small mb-1" for="role">Role</label>
+                                                    <input class="form-control" id="role" name = 'role' type="text" value="User" readonly>
+                                                </div>
+                                            <?php }
+                                            ?>
+
+                                            <div class="form-group">
+                                                <label for="password">Password</label>
+                                                <input type="password" name="password" id="password"  class="form-control" autocomplete="off" value="" />
+                                                <!--<div class="errorMessage"> <?php /*echo $validationErrors['password']; */?>
+                                                </div>-->
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="confirmPassword">Confirm Password</label>
+                                                <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" autocomplete="off" value="" />
+                                                <!--<div class="errorMessage">  <?php /*echo $validationErrors['confirmPassword']; */?>
+                                                </div>-->
+                                            </div>
+
+                                        </div>
+
+                                        <div id="success"> </div>
+                                        <div class="modal-footer">
+                                            <input type="hidden" name="operation" id="operation">
+                                            <input type="hidden" name="member_id" id="member_id">
+                                            <input type="submit" class="btn btn-primary"  name="action" id="action"  value="Save">
+                                            <button type="button" name="close" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                         <div class="ibox-content">
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover dataTables-example" id="memListTable" cellspacing="0" width="100%">
@@ -108,7 +195,7 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
                                         <th>Role</th>
                                         <?php
                                         if($_SESSION['role'] == 'admin'){?>
-                                            <th></th>
+                                            <th>Action</th>
                                         <?php }
                                         ?>
                                     </tr>
@@ -127,7 +214,7 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
                                         <th>Role</th>
                                         <?php
                                         if($_SESSION['role'] == 'admin'){?>
-                                            <th></th>
+                                            <th>Action</th>
                                         <?php }
                                         ?>
                                     </tr>
@@ -142,7 +229,7 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
                 </div>
             </div>
 
-            <div class="modal inmodal" id="myModal" tabindex="-1" data-backdrop="static" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <!--<div class="modal inmodal" id="modalId" tabindex="-1" data-backdrop="static" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content animated bounceInRight">
                         <div class="modal-header">
@@ -151,7 +238,7 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
                         </div>
 
                         <div class="modal-body">
-                            <form method="POST" class="profile-form" id="modalForm" enctype='multipart/form-data'>
+                            <form method="POST" class="profile-form" id="modal-form" enctype='multipart/form-data'>
 
                                 <div class="modal-body">
                                     <p id="message"></p>
@@ -185,7 +272,7 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
                                     </div>
 
                                     <?php
-                                    if($_SESSION['role'] == 'admin'){?>
+/*                                    if($_SESSION['role'] == 'admin'){*/?>
                                         <div class="form-group">
                                             <label class="small mb-1" for="role">Role</label>
                                             <select class="form-control" name="role" id="role">
@@ -194,16 +281,16 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
                                                 <option value="user" >User</option>
                                             </select>
                                         </div>
-                                    <?php }
-                                    ?>
+                                    <?php /*}
+                                    */?>
                                     <?php
-                                    if($_SESSION['role'] == 'manager'){?>
+/*                                    if($_SESSION['role'] == 'manager'){*/?>
                                         <div class="form-group">
                                             <label class="small mb-1" for="role">Role</label>
                                             <input class="form-control" id="role" name = 'role' type="text" value="User" readonly>
                                         </div>
-                                    <?php }
-                                    ?>
+                                    <?php /*}
+                                    */?>
 
 
                                     <div class="form-group">
@@ -231,7 +318,7 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
                     </div>
                 </div>
             </div>
-
+-->
 
         </div>
 
@@ -299,7 +386,7 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
     }
 
 /*  https://cdn4.iconfinder.com/data/icons/liny/24/clock-plus-line-512.png*/
-    .tabela {
+    /*.tabela {
         font-size: 12px;
         width: 90%;
         max-width: 900px;
@@ -353,7 +440,7 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
     .tabelaLast td {
         border: 1px solid #4b4141;
         padding: 8px;
-    }
+    }*/
 </style>
 <script>
     let dataTable;
@@ -811,6 +898,18 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
             success: "valid"
         });
 
+        $.validator.addMethod("passwordRule", function (value, element) {
+            return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[.@$!%*?&])[A-Za-z\d.@$!%*?&]{8,}$/.test(value);
+        }, 'Password must contain at least one uppercase, one lowercase, one digit, one special character')
+
+        $.validator.addMethod("lettersOnly", function (value, element) {
+            return /^[a-zA-Z]+$/.test(value);
+        }, 'Only letters allowed!')
+
+        $.validator.addMethod("phoneNum", function (value, element) {
+            return /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/.test(value);
+        }, 'Phone number is not valid!')
+
         $.validator.addMethod("over18", function(value) {
             var birthday = new Date(value);
 
@@ -820,36 +919,19 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
             if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthday.getDate())) {
                 age--;
             }
-            return age >= 18;
-        });
-        $.validator.addMethod("strongPassword", function(value) {
-            var capitalLetterRegex = /[A-Z]/;
-            var lowercaseLetterRegex = /[a-z]/;
-            var numberRegex = /[0-9]/;
-            var specialCharacterRegex = /[!@#$%^&*]/;
-
-            var hasCapital = capitalLetterRegex.test(value);
-            var hasLowercase = lowercaseLetterRegex.test(value);
-            var hasNumber = numberRegex.test(value);
-            var hasSpecialCharacter = specialCharacterRegex.test(value);
-            return hasCapital && hasLowercase && hasNumber && hasSpecialCharacter;
+            return age >=18;
         });
 
-        $.validator.addMethod("phoneNum", function (value, element) {
-            return /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/.test(value);
-        }, 'Phone number is not valid!')
-
-        validator = $( "#modalForm" ).validate({
+        $("#modal-form").validate({
             rules: {
                 name: {
                     required: true,
-                    lettersonly: true
+                    lettersOnly: true
                 },
                 lastname: {
                     required: true,
-                    lettersonly: true
+                    lettersOnly: true
                 },
-
                 birthday: {
                     required: true,
                     over18: true
@@ -865,47 +947,48 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
                 password: {
                     required: true,
                     minlength: 8,
-                    strongPassword: true
+                    passwordRule: true
                 },
                 confirmPassword: {
                     required: true,
-                    equalTo: "#password"
-                }
+                    minlength: 8,
+                    equalTo: '#password'
+                },
+
             },
-            messages:{
+            messages: {
                 name: {
-                    required: 'Name is mandatory',
-                    lettersonly: 'Name cannot contain digits'
+                    required: "Please enter user firstname!",
+                    lettersOnly: "Name should include letters only!"
                 },
                 lastname: {
-                    required: 'Lastname is mandatory',
-                    lettersonly: 'Lastname cannot contain digits'
+                    required: "Please enter user lastname!",
+                    lettersOnly: "Lastname should include letters only!"
                 },
                 birthday: {
-                    required: 'Birthday is mandatory',
-                    over18: "You must be 18 or older."
+                    required: "Please enter user birthday!",
+                    over18: "User must be +18 years old!"
                 },
                 phone: {
                     required: "Please enter user phone number!",
                     phoneNum: "Enter a valid phone number!"
                 },
-                email: {
-                    required: 'Email is mandatory',
-                    email: 'Please enter a valid email address'
-                },
                 password: {
-                    required: 'Please enter your password',
-                    minlength: 'Password must be at least 8 characters long',
-                    strongPassword: 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.'
+                    required: "Please provide a password!",
+                    minlength: "Password should be at least 8 characters long",
+                    passwordRule: "Password should contain at least 1 uppercase , 1 lowercase, 1 digit , and 1 special character and also be 8 characters long!"
                 },
                 confirmPassword: {
-                    required: 'Please confirm your password',
-                    equalTo: 'Passwords do not match'
+                    required: "Please confirm password!",
+                    minlength: "Password should be at least 8 characters long",
+                    equalTo: "Password does not match, please enter the same password as above!"
                 }
-            }
-        });
 
-        $('#modalForm input').on('input click', function() {
+            }
+
+        })
+
+        $('#modal-form input').on('input click', function() {
             var fieldName = $(this).attr('name');
             var errorElement = $('#' + fieldName + '-error');
 
@@ -943,21 +1026,32 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
             }, 1300);
         }
 
+        $(document).on('click', '.delete', function(){
+            var member_id = $(this).attr("id");
+            if(confirm("Are you sure you want to delete this user?"))
+            {
+                $.ajax({
+                    url:"../inspina/backend/deleteUser.php",
+                    method:"POST",
+                    data:{member_id:member_id},
+                    success:function(data)
+                    {
+                        dataTable.ajax.reload();
+                    }
+                });
+            }
+            else
+            {
+                return false;
+            }
+        });
+
+
     });
 
-    $(document).on('click', '#btn_close', function () {
-        resetFormValidation();
-        closeModal();
-    })
 
 
-
-    $(document).on('click', '#btn_dismiss', function () {
-        resetFormValidation();
-        closeModal();
-    });
-
-    $(document).on('submit', '#modalForm', function(event) {
+    $(document).on('submit', '#modal-form', function(event) {
         event.preventDefault();
         if ($(this).valid()) {
             $.ajax({
@@ -979,7 +1073,7 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
         }
     });
 
-    $(document).on('click', '.update-user-btn', function(e){
+    $(document).on('click', '.update', function(e){
         e.preventDefault();
         var member_id = $(this).attr("id");
         /*        var tr = $(this).closest('tr');
@@ -1004,55 +1098,22 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
         openModal();
     });
 
-    $(document).on('click', '#add_button' ,function(){
+    $(document).on('click', '#addButton' ,function(){
         $('.modal-title').text("Add New Details");
         $('#insertdata').val("Save");
         $('#operation').val("Save");
         openModal();
     })
+/*fshirjaaaaa e user*/
 
-    $(document).on('click', '.delete-user-btn', function(){
-        var member_id = $(this).attr("id");
-        Swal.fire({
-            title: 'Are you sure?',
-            text: 'You will not be able to recover this user!',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'No, cancel!',
-            reverseButtons: true ,
-            customClass: {
-                popup: 'custom-swal-popup'
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                console.log(member_id);
-                var formData = new FormData();
-                formData.append('member_id', member_id);
-                formData.append('operation', 'Delete');
-                $.ajax({
-                    url: '../inspina/backend/fetchWorkingDays.php',
-                    method: 'POST',
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    success: function(response) {
-                        dataTable.ajax.reload();
-                        console.log(response);
-                    },
-
-                });
-            }
-        });
-    });
 
     function closeModal(){
-        $('#modalForm')[0].reset();
+        $('#modal-form')[0].reset();
         $('#password').closest('.form-group').show();
         $('#confirmPassword').closest('.form-group').show();
         $('#message').html('');
         $('.error').remove();
-        $('#myModal').hide();
+        $('#modalId').hide();
         $('body').removeClass('modal-open');
         $('.modal-backdrop').remove();
         $('.modal-title').text("Add New Details");
@@ -1064,12 +1125,12 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
 
     function openModal(){
         $('body').addClass('modal-open').append('<div class="modal-backdrop in"></div>');
-        $('#myModal').show();
+        $('#modalId').show();
     }
 
     function resetFormValidation() {
         validator.resetForm();
-        $('#modalForm .error').remove();
+        $('#modal-form .error').remove();
     }
 
 </script>
