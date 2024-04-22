@@ -132,6 +132,21 @@ if(isset($_POST['operation'])){
 
             $result = mysqli_query($db_conn, $query);
 
+           /* if($result){
+                $subordinate_id = mysqli_insert_id($db_conn);
+                $hierarchy_query = "INSERT INTO hierarchy (supervisor_id, subordinate_id)
+                                VALUES ('$supervisor_id', '$subordinate_id')";
+                $hierarchy_result = mysqli_query($db_conn, $hierarchy_query);
+
+                if($hierarchy_result){
+                    echo 'Your record has been saved. ';
+                } else {
+                    echo "Failed to save hierarchy information.";
+                }
+            }
+            else{
+                echo "Your record has not been saved";
+            }*/
         }
     }
 

@@ -23,7 +23,7 @@ $role = $_SESSION['role'];
 // select users based on supervisor_id
 if ($role === 'admin') {
     // If supervisor_id is null, fetch all records
-    $sql = "SELECT * FROM users";
+    $sql = "SELECT * FROM users where 1 = 1";
 } else if ($role === 'manager') {
     // If supervisor_id is not null, fetch records where supervisor_id matches the logged-in user's ID
     $sql = "SELECT * FROM users WHERE supervisor_id = $loggedInUserId OR id = $loggedInUserId";
@@ -37,22 +37,25 @@ if ($role === 'admin') {
 $query = mysqli_query($db_conn, $sql);
 
 if ($loggedInUserId === null) {
-    $sql = "SELECT * FROM users";
+    $sql = "SELECT * FROM users where 1 = 1 ";
 }
 $totalData = mysqli_num_rows($query);
 
 $totalFilter = $totalData;
 // search
+
 /*$sql = "SELECT * FROM users WHERE supervisor_id = $loggedInUserId";*/
 
 if (!empty($request['search']['value'])) {
-    $sql .= " AND (id Like '%" . $request['search']['value'] . "%' ";
-    $sql .= " OR name Like '%" . $request['search']['value'] . "%' ";
-    $sql .= " OR birthday Like '%" . $request['search']['value'] . "%' ";
-    $sql .= " OR phone Like '%" . $request['search']['value'] . "%' ";
-    $sql .= " OR email Like '%" . $request['search']['value'] . "%' ";
-    $sql .= " OR lastname Like '%" . $request['search']['value'] . "%' )";
+    $sql .= " AND (id LIKE '%" . $request['search']['value'] . "%' ";
+    $sql .= " OR name LIKE '%" . $request['search']['value'] . "%' ";
+    $sql .= " OR lastname LIKE '%" . $request['search']['value'] . "%' ";
+    $sql .= " OR birthday LIKE '%" . $request['search']['value'] . "%' ";
+    $sql .= " OR phone LIKE '%" . $request['search']['value'] . "%' ";
+    $sql .= " OR email LIKE '%" . $request['search']['value'] . "%' ";
+    $sql .= " OR role LIKE '%" . $request['search']['value'] . "%')";
 }
+
 $query = mysqli_query($db_conn, $sql);
 $totalData = mysqli_num_rows($query);
 
@@ -84,12 +87,12 @@ while ($row = mysqli_fetch_array($query)) {
 
 
 //if role== admin, show update, and delete button, else if role == manager or user show only edit , else if role== user dont show any of the buttons
-if ($role === 'admin') {
-    $subdata[] = '<button type="button" name="update" data-id="'. $row[0] .'" class="btn btn-primary btn-sm update"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</button>' .
-                 '<button type="button" name="delete" data-id="'. $row[0] .'" class="btn btn-danger btn-sm delete"><i class="glyphicon glyphicon-trash"></i>&nbsp;Delete</button>';
-} else if ($role === 'manager' || $role === 'user' ) {
-    $subdata[] = '<button type="button" name="update" data-id="'. $row[0] .'" class="btn btn-primary btn-sm update"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</button>';
-}
+    if ($role === 'admin') {
+        $subdata[] = '<button type="button" name="update" data-id="'. $row[0] .'" class="btn btn-primary btn-sm update"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</button>' .
+            '<button type="button" name="delete" data-id="'. $row[0] .'" class="btn btn-danger btn-sm delete"><i class="glyphicon glyphicon-trash"></i>&nbsp;Delete</button>';
+    } else if ($role === 'manager' || $role === 'user' ) {
+        $subdata[] = '<button type="button" name="update" data-id="'. $row[0] .'" class="btn btn-primary btn-sm update"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</button>';
+    }
     $data[] = $subdata;
 }
 
@@ -101,5 +104,3 @@ $json_data = array(
 );
 echo json_encode($json_data);
 ?>
-
-
