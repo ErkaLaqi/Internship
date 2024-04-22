@@ -2,7 +2,11 @@
 global $db_conn;
 session_start();
 include "include/dbConnection.php";
-
+if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
+    header("Location: login.php");
+} elseif (empty($_SESSION['email']) || empty($_SESSION['id'])) {
+    header("Location: login.php");
+}
 $validationErrors = ['name' => '', 'lastname' => '', 'email' => '', 'password' => '',
     'confirmPassword' => '', 'phone' => '', 'register' => '', 'birthday' => '', 'role' => ''];
 
@@ -376,7 +380,6 @@ if (isset($_SESSION['modal_form_validations'])) {
                     data: $("#modal-form").serialize(),
                     dataType: "text",
                     success:function (response){
-
                         /*$('#success').text("Form Submit Success!");*/
                         $('#modalForm').modal('hide');
                         dataTable.ajax.reload();

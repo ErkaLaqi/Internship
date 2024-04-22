@@ -101,7 +101,6 @@ VALUES ('$name', '$lastname', '$birthday', '$phone', '$email', '$hashedPassword'
         }
     } else if ($_POST["operation"] === "Edit") {
         if(isset($_POST["member_id"])) {
-
             $id = $_POST["member_id"];
             $check_email_sql = "SELECT * FROM users WHERE email = '$email' AND id != '$id'";
             $result = $db_conn->query($check_email_sql);
