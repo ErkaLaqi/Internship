@@ -6,7 +6,7 @@ include "../include/dbConnection.php";
 global $db_conn;
 
 if(isset($_POST['operation'])){
-    if($_POST['operation'] == "Insert") {
+    if($_POST['operation'] == "Add") {
 //In other words, $_REQUEST is an array containing data from $_GET, $_POST, and $_COOKIE.
 
         $request = $_REQUEST;
@@ -158,8 +158,7 @@ if(isset($_POST['operation'])){
             $phone = $_POST['phone'];
             $email = $_POST['email'];
             $role = $_POST['role'];
-            /*            print_r($role);
-                        exit;*/
+
             $password = $_POST['password'];
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
             $select = "select * from users where id='$id'";
@@ -209,53 +208,9 @@ if(isset($_POST['operation'])){
 
     }
 
-    if($_POST['operation'] == "Delete") {
-        if (isset($_POST['member_id'])) {
-         /*   $id = $_POST['member_id'];
-           $query = "DELETE FROM hierarchy
-            WHERE subordinate_id = $id OR supervisor_id = $id";
 
-            $res = $db_conn->query($query);
+    if($_POST['operation'] == "fetch_years") {
 
-           if($res){
-                $sql = " DELETE FROM users
-            WHERE id = $id";
-
-                $result = $db_conn->query($sql);
-                if($result){
-                    echo "Delete is successful";
-                }
-                else{
-                    die($db_conn->error);
-                }
-            }
-            else{
-                die($db_conn->error);
-            }*/
-            $member_id = mysqli_real_escape_string($db_conn, $_POST["member_id"]);
-            $query = "DELETE FROM users WHERE id = '$member_id'";
-            $result = mysqli_query($db_conn, $query);
-            if ($result) {
-                // Deletion successful
-                echo json_encode(array("status" => "success", "message" => "User deleted successfully!"));
-            } else {
-                // Error occurred during deletion
-                echo json_encode(array("status" => "error", "message" => "Error deleting user!"));
-            }
-
-        }
-    }
-
-    if($_POST['operation'] == "years") {
-        /*        $name = $_POST['name'] ?? null;
-                $boolan = true;
-                $name = $name ?: 'No Name';
-                $name = $name || 'No Name';
-                $number = 2;
-                if ($number === true) {
-
-                }
-                echo $boolan ? 'Yes' : 'No';*/
         $username = $_POST['username'];
         $sql="WITH difference_in_seconds AS (
                     SELECT
@@ -263,7 +218,7 @@ if(isset($_POST['operation'])){
                     username,
                     data_hyrje,
                     ora_hyrje,
-        CASE WHEN ora_dalje = '00:00:00' THEN '24:00:00' ELSE ora_dalje END AS ora_dalje_adjusted,
+        CASE WHEN ora_dalje = '00:00:00' THEN '24:00:00' ELSE ora_dalje END AS ora_dalje_adjusted, 
         CASE
             WHEN ora_dalje = '00:00:00' THEN
                 TIMESTAMPDIFF(
@@ -298,11 +253,7 @@ if(isset($_POST['operation'])){
         FROM summed_differences
         WHERE username = '$username'
         GROUP BY year;";
-        /*
-                $sql = "SELECT DISTINCT YEAR(hdk.data_hyrje) AS work_year
-                        FROM hyrje_dalje_kryesore hdk
-                        JOIN users u ON hdk.username = u.user_username
-                        WHERE u.user_username = '$username'";*/
+
         $result = mysqli_query($db_conn, $sql);
 
         if ($result) {
@@ -334,7 +285,7 @@ if(isset($_POST['operation'])){
                 }*/
 
     }
-    if($_POST['operation'] == "Months") {
+    if($_POST['operation'] == "fetch_months") {
         $username = $_POST['username'];
         $year = $_POST['year'];
 
@@ -398,7 +349,7 @@ GROUP BY year, month;";
         }
 
     }
-    if($_POST['operation'] == "Days") {
+    if($_POST['operation'] == "fetch_days") {
 
         $username = $_POST['username'];
         $year = $_POST['year'];
@@ -467,8 +418,7 @@ GROUP BY year, month;";
         }
 
     }
-
-    if($_POST['operation'] == "Hours") {
+    if($_POST['operation'] == "fetch_hours") {
 
         $username = $_POST['username'];
         $year = $_POST['year'];

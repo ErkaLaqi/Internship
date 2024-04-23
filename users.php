@@ -6,6 +6,13 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
 } elseif (empty($_SESSION['email']) || empty($_SESSION['id'])) {
     header("Location: login.php");
 }
+
+$validationErrors = ['name' => '', 'lastname' => '', 'email' => '', 'password' => '',
+    'confirmPassword' => '', 'phone' => '', 'register' => '', 'birthday' => '', 'role' => ''];
+
+if (isset($_SESSION['modal_form_validations'])) {
+    $validationErrors = array_merge($validationErrors, $_SESSION['modal_form_validations']);
+    unset($_SESSION['modal_form_validations']); }
 ?>
 
 
@@ -229,96 +236,7 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
                 </div>
             </div>
 
-            <!--<div class="modal inmodal" id="modalId" tabindex="-1" data-backdrop="static" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content animated bounceInRight">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" id="btn_dismiss"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                            <h4 class="modal-title">Add a new user</h4>
-                        </div>
 
-                        <div class="modal-body">
-                            <form method="POST" class="profile-form" id="modal-form" enctype='multipart/form-data'>
-
-                                <div class="modal-body">
-                                    <p id="message"></p>
-                                    <div class="form-group">
-                                        <label class="small mb-1" for="name">First name</label>
-                                        <input class="form-control" id="name" name = 'name' type="text" placeholder="Enter your first name" value="" required>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="small mb-1" for="lastname">Last name</label>
-                                        <input class="form-control" id="lastname" name = 'lastname'  type="text" placeholder="Enter your last name" value="" required>
-                                    </div>
-
-
-                                    <div class="form-group">
-                                        <label class="small mb-1" for="birthday">Birthday</label>
-                                        <input class="form-control" id="birthday" name = 'birthday' type="date" value="" required>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="phone">Phone Number</label>
-                                        <input type="text" name="phone" id="phone" class="form-control" autocomplete="off" value="" />
-                                    </div>
-
-
-                                    <div class="form-group">
-                                        <label class="small mb-1" for="email">Email address</label>
-                                        <input class="form-control" id="email" name = 'email' type="email" placeholder="Enter your email address" value="" required>
-                                        <div class="error">
-                                        </div>
-                                    </div>
-
-                                    <?php
-/*                                    if($_SESSION['role'] == 'admin'){*/?>
-                                        <div class="form-group">
-                                            <label class="small mb-1" for="role">Role</label>
-                                            <select class="form-control" name="role" id="role">
-                                                <option value="admin">Admin</option>
-                                                <option value="manager">Manager</option>
-                                                <option value="user" >User</option>
-                                            </select>
-                                        </div>
-                                    <?php /*}
-                                    */?>
-                                    <?php
-/*                                    if($_SESSION['role'] == 'manager'){*/?>
-                                        <div class="form-group">
-                                            <label class="small mb-1" for="role">Role</label>
-                                            <input class="form-control" id="role" name = 'role' type="text" value="User" readonly>
-                                        </div>
-                                    <?php /*}
-                                    */?>
-
-
-                                    <div class="form-group">
-                                        <label class="small mb-1" for="password">New password</label>
-                                        <input class="form-control" id="password" type="password" name="password" placeholder="Enter your new password" value="" required>
-                                    </div>
-                                    <input type="hidden" name="page" value="display">
-
-                                    <div class="form-group">
-                                        <label class="small mb-1" for="confirmPassword">Confirm new password</label>
-                                        <input class="form-control" id="confirmPassword" type="password" name="confirmPassword" placeholder="Enter your new password" value="" required>
-                                    </div>
-                                    <input type="hidden" name="page" value="display">
-                                </div>
-                                <div class="modal-footer">
-                                    <input type="hidden" name="member_id" id="member_id" />
-                                    <input type="hidden" name="operation" id="operation" />
-                                    <button type="button" class="btn btn-white" data-dismiss="modal" id="btn_close">Close</button>
-                                    <input type="submit" name="insertdata" id="insertdata" class="btn btn-primary" value="Save" />
-                                </div>
-
-                            </form>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
--->
 
         </div>
 
@@ -446,8 +364,8 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
     let dataTable;
     var validator;
     $(document).ready(function (){
-        function format(d) {
-            let username = d.username;
+        function format(a) {
+            let username = a.username;
 
             //unique ID
             let tableId = 'table_' + username;
@@ -462,7 +380,7 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
                 '<thead class="thead-dark"><tr><th></th><th>Year</th><th>Hours worked</th><th>Minutes worked</th><th>Seconds worked</th></tr></thead>' +
                 '<tbody>';
 
-            $('#filter-btn').on('click', function() {
+            /*$('#filter-btn').on('click', function() {
                 // Get start and end dates
                 let startDate = $('#start-date').val();
                 let endDate = $('#end-date').val();
@@ -498,10 +416,10 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
                         alert('Error fetching data.');
                     }
                 });
-            });
+            });*/
 
             let ajaxData = {
-                operation: 'years',
+                operation: 'fetch_years',
                 username: username
             };
 
@@ -556,9 +474,9 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
                     });
 
 
-                    function format(e) {
-                        let username = d.username;
-                        let year = e.year;
+                    function format(b) {
+                        let username = a.username;
+                        let year = b.year;
 
                         //unique ID
                         let tableId = 'table_' + year;
@@ -568,7 +486,7 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
                             '<tbody>';
 
                         let ajaxData = {
-                            operation: 'Months',
+                            operation: 'fetch_months',
                             year: year,
                             username: username
                         };
@@ -635,10 +553,10 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
                                     }
                                 });
 
-                                function format(a) {
-                                    let username = d.username;
-                                    let year = e.year;
-                                    let month = a.month;
+                                function format(c) {
+                                    let username = a.username;
+                                    let year = b.year;
+                                    let month = c.month;
                                     let date = new Date("2000 " + month + " 1");
                                     let monthNumber = date.getMonth();
                                     monthNumber += 1;
@@ -647,11 +565,11 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
                                     let tableId = 'table_' + month;
 
                                     let tableContent = '<table id="' + tableId + '" class="table table-bordered table-hover tabel">' +
-                                        '<thead class="thead-dark"><tr><th></th><th>Data</th><th>Hours worked</th><th>Minutes worked</th><th>Seconds worked</th></tr></thead>' +
+                                        '<thead class="thead-dark"><tr><th></th><th>Date</th><th>Hours worked</th><th>Minutes worked</th><th>Seconds worked</th></tr></thead>' +
                                         '<tbody>';
 
                                     let ajaxData = {
-                                        operation: 'Days',
+                                        operation: 'fetch_days',
                                         month : monthNumber,
                                         year: year,
                                         username: username
@@ -717,15 +635,15 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
                                                 }
                                             });
 
-                                            function format(b) {
-                                                let username = d.username;
-                                                let year = e.year;
-                                                let monthName = a.month;
+                                            function format(d) {
+                                                let username = a.username;
+                                                let year = b.year;
+                                                let monthName = c.month;
                                                 let date = new Date("2000 " + monthName + " 1");
                                                 let month = date.getMonth();
                                                 month += 1;
 
-                                                let dateStr = b.data;
+                                                let dateStr = d.data;
                                                 let parts = dateStr.split(' ');
                                                 let day = parts[0];
 
@@ -734,11 +652,11 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
                                                 let tableId = 'table_' + day;
 
                                                 let tableContent = '<table id="' + tableId + '" class="table table-bordered table-hover tabelaLast">' +
-                                                    '<thead class="thead-dark"><tr><th>Entered</th><th>Left</th><th>Difference</th></tr></thead>' +
+                                                    '<thead class="thead-dark"><tr><th>Check In </th><th>Check Out</th><th>Hours Worked</th></tr></thead>' +
                                                     '<tbody>';
 
                                                 let ajaxData = {
-                                                    operation: 'Hours',
+                                                    operation: 'fetch_hours',
                                                     month : month,
                                                     year: year,
                                                     day : day,
@@ -841,7 +759,7 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
             let placeholderContent = '<div id="' + tableId + '_placeholder">Loading results...</div>';
             return placeholderContent;
         }
-
+/* 4 functions end here*/
 
         dataTable = $('#memListTable').DataTable({
             "processing": true,
@@ -856,7 +774,7 @@ if(!isset($_SESSION['email']) && !isset($_SESSION['id'])) {
                 url: '../inspina/backend/fetchWorkingDays.php',
                 method: "POST",
                 data: function (data) {
-                    data['operation'] = 'Insert';
+                    data['operation'] = 'Add';
                 }
             },
             "columns": [
